@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+    <!-- 유저 쿼리 -->
+    <query id="getAllUsers">
+        SELECT
+        *
+        FROM user
+    </query>
+
+    <query id="getUserByEmail">
+        SELECT
+        *
+        FROM user
+        WHERE email = ?
+    </query>
+
+    <query id="addUser">
+        INSERT INTO user (nickname, email, password)
+        VALUES (?, ?, ?)
+    </query>
+
+    <query id="updateNickname">
+        UPDATE user SET nickname = ?, updated_at = COALESCE(updated_at, NOW()) WHERE email = ?
+    </query>
+
+    <query id="softDeleteUser">
+        UPDATE user SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE email = ? AND password = ?
+    </query>
+
+    <!-- 카테고리 쿼리 -->
+    <query id="getAllCategories">
+        SELECT
+        *
+        FROM category
+    </query>
+
+    <query id="getCategoryByTitle">
+        SELECT
+        *
+        FROM category
+        WHERE title = ?
+    </query>
+
+    <query id="addCategory">
+        INSERT INTO category (title)
+        VALUES (?)
+    </query>
+
+    <!-- 태스크 쿼리 -->
+    <query id="getAllTasks">
+        SELECT
+        *
+        FROM task
+    </query>
+
+    <query id="getTaskByCategory">
+        SELECT
+        *
+        FROM task INNER JOIN category ON task.category_id = category.category_id
+        WHERE task.category_id = ?
+    </query>
+
+    <query id="addTask">
+        INSERT INTO task (user_id, category_id, contents)
+        VALUES (?, ?, ?)
+    </query>
+
+    <query id="updateTaskStatus">
+        UPDATE task SET status = "COMPLETED", updated_at = COALESCE(updated_at, NOW()) WHERE user_id = ?
+    </query>
+
+    <query id="softDeleteTask">
+        UPDATE task SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE user_id = ? AND task_id = ?
+    </query>
+</queries>

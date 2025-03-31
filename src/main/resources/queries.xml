@@ -48,9 +48,21 @@
 
     <!-- 태스크 쿼리 -->
     <query id="getAllTasks">
-        SELECT
-        *
-        FROM task
+        SELECT t.task_id, c.title AS category_title, u.nickname, t.contents, t.created_at, t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.is_deleted = 0
+    </query>
+
+    <query id="getTasksByUser">
+        SELECT t.task_id, t.category_id, t.contents, t.created_at, t.status,
+        c.title AS category_title, u.nickname AS nickname
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.user_id = ? AND t.is_deleted = 0
+        ORDER BY t.created_at DESC;
     </query>
 
     <query id="getTaskByCategory">
@@ -66,10 +78,24 @@
     </query>
 
     <query id="updateTaskStatus">
-        UPDATE task SET status = "COMPLETED", updated_at = COALESCE(updated_at, NOW()) WHERE user_id = ?
+        UPDATE task SET status = "COMPLETED", updated_at = COALESCE(updated_at, NOW()) WHERE user_id = ? AND task_id = ?
+    </query>
+
+    <query id="getTasksByUserInProgress">
+        SELECT
+        t.task_id,
+        c.title AS category_title,
+        u.nickname,
+        t.contents,
+        t.created_at,
+        t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.user_id = ? AND t.status = 'IN_PROGRESS' AND t.is_deleted = 0
     </query>
 
     <query id="softDeleteTask">
-        UPDATE task SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE user_id = ? AND task_id = ?
+        UPDATE task SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE task_id = ? AND user_id = ?
     </query>
 </queries>

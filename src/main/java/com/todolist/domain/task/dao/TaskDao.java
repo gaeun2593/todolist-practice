@@ -79,10 +79,11 @@ public class TaskDao {
             ResultSet rs = ps.executeQuery();
 
             while (rs.next()) {
-                TaskWithDetailsDto task = new TaskWithDetailsDto(
+                TodoAndCategoryDto task = new TodoAndCategoryDto(
                         rs.getInt("task_id"),
-                        rs.getString("category_title"),
+                        rs.getInt("category_id"),
                         rs.getString("nickname"),
+                        rs.getString("category_title"),
                         rs.getString("contents"),
                         rs.getTimestamp("created_at").toLocalDateTime(),
                         TaskStatus.valueOf(rs.getString("status"))
@@ -93,8 +94,8 @@ public class TaskDao {
             e.printStackTrace();
         }
         return tasks;
-        }
     }
+
 
     // ✅ To Do List 내용 등록 (CREATE)
     public boolean addTaskContents(Task task) {

@@ -4,6 +4,7 @@ import com.todolist.domain.category.dao.CategoryDao;
 import com.todolist.domain.task.dao.TaskDao;
 import com.todolist.domain.task.model.Task;
 import com.todolist.domain.task.model.dto.TaskWithDetailsDto;
+import com.todolist.domain.task.model.dto.TodoAndCategoryDto;
 import com.todolist.domain.user.model.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,16 +44,14 @@ public class TaskService {
     }
 
     // 카테고리별 To Do List 조회
-
-
-    // 키워드 검색 : 키워드 받아서 조회
-
+    public List<TodoAndCategoryDto> getTasksByCategory(int categoryId) throws SQLException {
+        return taskDao.getTasksByCategory(categoryId);
+    }
 
     // To Do List 내용 등록
     public boolean addTask(Task task) throws SQLException {
         return  taskDao.addTaskContents(task);
     }
-
 
     // To Do List 상태 변경 : IN_PROGRESS 에서 COMPLETED 로 변경. 수정일자 등록
     public boolean completeTask(User loggedInUser, int taskId) throws SQLException {
@@ -67,9 +66,6 @@ public class TaskService {
     public List<TaskWithDetailsDto> getTasksByUserInProgress(User loggedInUser) throws SQLException {
         return taskDao.getTasksByUserInProgress(loggedInUser.getUserId());
     }
-
-    // TOP3 랭킹 보기
-
 
     // To Do List 삭제 : 삭제 정보(is_delete = 1) 업데이트
     public boolean softDeleteTask(User loggedInUser, int taskId) throws SQLException {

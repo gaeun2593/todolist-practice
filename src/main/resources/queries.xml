@@ -66,10 +66,13 @@
     </query>
 
     <query id="getTaskByCategory">
-        SELECT
-        *
-        FROM task INNER JOIN category ON task.category_id = category.category_id
-        WHERE task.category_id = ?
+        SELECT t.task_id, t.category_id, u.nickname AS nickname,
+        c.title AS category_title, t.contents, t.created_at, t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.category_id = ? AND t.is_deleted = 0
+        ORDER BY t.created_at DESC;
     </query>
 
     <query id="addTask">

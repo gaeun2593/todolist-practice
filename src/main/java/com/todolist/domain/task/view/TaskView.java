@@ -1,6 +1,9 @@
 package com.todolist.domain.task.view;
 
+import com.todolist.domain.category.model.Category;
+import com.todolist.domain.category.service.CategoryService;
 import com.todolist.domain.task.model.dto.TaskWithDetailsDto;
+import com.todolist.domain.task.model.dto.TodoAndCategoryDto;
 import com.todolist.domain.task.service.TaskService;
 import com.todolist.domain.user.model.User;
 
@@ -12,10 +15,12 @@ import java.util.Scanner;
 public class TaskView {
 
     private TaskService taskService;
+    private CategoryService categoryService;
     private static Scanner scanner;
 
     public TaskView(Connection connection) {
         this.taskService = new TaskService(connection);
+        this.categoryService = new CategoryService(connection);
         this.scanner = new Scanner(System.in);
     }
 
@@ -25,10 +30,9 @@ public class TaskView {
             System.out.println("\n📝 투두리스트 관리 📝");
             System.out.println("1. 전체 투두리스트 조회");
             System.out.println("2. 카테고리별 조회");
-            System.out.println("3. 키워드 검색");
-            System.out.println("4. 투두리스트 등록");
-            System.out.println("5. 완료 표시하기");
-            System.out.println("6. 투두리스트 삭제");
+            System.out.println("3. 투두리스트 등록");
+            System.out.println("4. 완료 표시하기");
+            System.out.println("5. 투두리스트 삭제");
             System.out.println("0. 메인 화면으로");
             System.out.print("선택하세요: ");
 
@@ -37,11 +41,10 @@ public class TaskView {
 
             switch (choice) {
                 case 1 -> taskView.getAllTasks(loggedInUser);
-//                case 2 -> registerUser();
+                case 2 -> getTasksByCategory();
 //                case 3 -> getUserById();
-//                case 4 -> updateUser();
-                case 5 -> updateTaskStatus(loggedInUser);
-                case 6 -> softDeleteTask(loggedInUser);
+                case 4 -> updateTaskStatus(loggedInUser);
+                case 5 -> softDeleteTask(loggedInUser);
                 case 0 -> {
                     System.out.println("프로그램을 종료합니다.");
                     return;
@@ -86,7 +89,7 @@ public class TaskView {
         }
     }
 
-    // 1️⃣ - 1. 유저 별 ToDoList 조회
+    // 1️⃣ - 1. 유저 별 ToDoList 조회 (READ)
     private void getTasksByUser(User loggedInUser) {
         try {
             List<TaskWithDetailsDto> tasks = taskService.getTasksByUser(loggedInUser);
@@ -116,6 +119,63 @@ public class TaskView {
             }
         } catch (SQLException e) {
             System.out.println("❌ To Do List를 조회하는 중 오류가 발생했습니다.");
+        }
+    }
+
+    // 2️⃣ 카테고리별 조회 (READ)
+    private void getTasksByCategory() {
+        try {
+            List<Category> categories = categoryService.getAllCategories();
+
+            if (categories.isEmpty()) {
+                System.out.println("❌ 현재 추가된 카테고리가 없습니다.");
+                return;
+            }
+
+            System.out.println("\n📚 카테고리 목록 📚");
+            while (true) {
+                for (int i = 0; i < categories.size(); i++) {
+                    System.out.println((i + 1) + ". " + categories.get(i).getTitle());
+                }
+                System.out.println("0. 뒤로가기");
+
+                System.out.print("\n카테고리 선택: ");
+                int choice = scanner.nextInt();
+                scanner.nextLine();
+
+                if (choice == 0) {
+                    System.out.println("🔙 카테고리 목록으로 돌아갑니다.");
+                    return;
+                }
+
+                if (choice > 0 && choice <= categories.size()) {
+                    Category selectedCategory = categories.get(choice - 1);
+
+                    List<TodoAndCategoryDto> tasks = taskService.getTasksByCategory(selectedCategory.getCategoryId());
+                    System.out.println("\n[" + selectedCategory.getTitle() + "] 할 일 목록:");
+                    if (tasks.isEmpty()) {
+                        System.out.println("❌ 작성된 투두리스트가 없습니다.");
+                    } else {
+                        for (int i = 0; i < tasks.size(); i++) {
+                            System.out.println(tasks.get(i).toString());
+                        }
+                    }
+                    System.out.println("0. 뒤로가기");
+
+                    System.out.print("\n선택: ");
+                    int backChoice = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if (backChoice == 0) {
+                        continue;
+                    }
+                } else {
+                    System.out.println("❌ 잘못된 입력입니다. 다시 선택하세요.");
+                }
+
+            }
+        } catch (SQLException ex) {
+            throw new RuntimeException(ex);
         }
     }
 

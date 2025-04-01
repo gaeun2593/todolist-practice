@@ -81,14 +81,8 @@ public class TodoAndCategoryDto {
 
     @Override
     public String toString() {
-        return "TodoAndCategoryDto{" +
-                "taskId=" + taskId +
-                ", categoryId=" + categoryId +
-                ", userNickname='" + userNickname + '\'' +
-                ", categoryTitle='" + categoryTitle + '\'' +
-                ", taskContents='" + taskContents + '\'' +
-                ", createdAt=" + createdAt +
-                ", status=" + status +
-                '}';
+        return userNickname + "님 | " + createdAt.toLocalDate() + "\n"
+                + (status == TaskStatus.COMPLETED ? "[ v ]  " : "[   ]  ")
+                + taskContents;
     }
 }

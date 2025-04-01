@@ -38,6 +38,10 @@ public class UserService {
         if (user == null) {
             throw new IllegalArgumentException("❌ 해당 이메일의 사용자를 찾을 수 없습니다.");
         }
+        if (user.getIsDeleted() == 1) {
+            // 탈퇴된 회원인 경우
+            throw new IllegalArgumentException("❌ 이미 탈퇴된 회원입니다.");
+        }
         return user;
     }
 

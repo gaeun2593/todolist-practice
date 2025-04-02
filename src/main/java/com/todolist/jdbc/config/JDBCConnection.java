@@ -2,7 +2,6 @@ package com.todolist.jdbc.config;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import com.zaxxer.hikari.HikariPoolMXBean;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -61,14 +60,5 @@ public class JDBCConnection {
         if(dataSource != null){
             dataSource.close();
         }
-    }
-
-    public static void printConnectionPoolStatus() {
-        HikariPoolMXBean poolMXBean = dataSource.getHikariPoolMXBean();
-        System.out.println("[hikariCp 커넥션 풀 상태 ]");
-        System.out.println("총 커넥션 수 (total Connections) : " + poolMXBean.getTotalConnections());
-        System.out.println("활성 커넥션 수 (Active Connections) : " + poolMXBean.getActiveConnections());
-        System.out.println("유휴 커넥션 수 (IDLE Connections) : " + poolMXBean.getIdleConnections());
-        System.out.println("대기 중인 커넥션 요청 수 (Pending Threads) : " + poolMXBean.getThreadsAwaitingConnection());
     }
 }

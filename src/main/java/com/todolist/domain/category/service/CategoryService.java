@@ -19,7 +19,10 @@ public class CategoryService {
         this.categoryDao = new CategoryDao(connection);
     }
 
-    // 전체 카테고리 조회
+    /**
+     * 📌 모든 카테고리 조회
+     * - 데이터 검증 후 반환
+     */
     public List<Category> getAllCategories() throws SQLException {
         List<Category> categories = categoryDao.getAllCategories();
 
@@ -31,7 +34,15 @@ public class CategoryService {
         return categoryDao.getAllCategories();
     }
 
-    // 단일 카테고리 조회 (타이틀)
+    /**
+     * 📌 단일 카테고리 조회
+     * - 이 메서드는 주어진 카테고리 title 을 기반으로 데이터베이스에서 사용자를 조회합니다.
+     *
+     * @param title 조회할 카테고리의 제목
+     * @return 조회된 'Category' 객체를 반환. 카테고리가 존재하지 않을 경우, 예외 발생
+     * @throws IllegalArgumentException 해당 title 의 카테고리가 존재하지 않을 경우 발생
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     */
     public Category getCategoryByTitle(String title) throws SQLException {
         Category category = categoryDao.getCategoryByTitle(title);
 
@@ -41,7 +52,15 @@ public class CategoryService {
         return category;
     }
 
-    // 카테고리 추가
+    /**
+     * 📌 카테고리 추가
+     * - 이 메서드는 주어진 카테고리 title 을 기반으로 데이터베이스에서 사용자를 조회합니다.
+     *
+     * @param category 추가할 카테고리의 객체
+     * @return 조회된 'Category' 객체를 반환. 카테고리가 존재하지 않을 경우, 예외 발생
+     * @throws IllegalArgumentException 해당 title 의 카테고리가 존재하지 않을 경우 발생
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     */
     public boolean addCategory(Category category) throws SQLException {
         return  categoryDao.addCategory(category);
     }

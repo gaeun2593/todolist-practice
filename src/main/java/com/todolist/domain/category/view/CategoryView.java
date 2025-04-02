@@ -5,6 +5,7 @@ import com.todolist.domain.category.service.CategoryService;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Scanner;
 
 public class CategoryView {
@@ -16,7 +17,11 @@ public class CategoryView {
         this.scanner = new Scanner(System.in);
     }
 
-    public void addCategory() {
+    /**
+     * 📌 카테고리 등록 (CREATE)
+     * - 카테고리 title 을 입력받아 새로운 카테고리를 등록
+     */
+    public Category addCategory() {
         String title;
 
         // 카테고리 제목 길이 제한 (10자 이하)
@@ -37,6 +42,7 @@ public class CategoryView {
             boolean success = categoryService.addCategory(category);
             if (success) {
                 System.out.println("✅ 카테고리 등록이 완료되었습니다.");
+                return categoryService.getCategoryByTitle(title);
             } else {
                 System.out.println("❌ 카테고리 등록에 실패하였습니다.");
             }
@@ -45,5 +51,6 @@ public class CategoryView {
         } catch (IllegalArgumentException e) {
             System.out.println(e.getMessage());
         }
+        return null;
     }
 }

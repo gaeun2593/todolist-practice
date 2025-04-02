@@ -13,7 +13,9 @@ public class CategoryDao {
 
     public CategoryDao(Connection connection) { this.connection = connection; }
 
-    // ✅ 카테고리 전체 조회 (READ)
+    /**
+     * 📌 카테고리 전체 조회 (READ)
+     */
     public List<Category> getAllCategories() {
         List<Category> categories = new ArrayList<>();
         String query = QueryUtil.getQuery("getAllCategories"); // XML에서 쿼리 로드
@@ -34,7 +36,10 @@ public class CategoryDao {
         return categories;
     }
 
-    // ✅ 카테고리 단일 조회 (READ)
+    /**
+     * 📌 카테고리 단일 조회 (READ)
+     * - 카테고리 제목 조회
+     */
     public Category getCategoryByTitle(String title) {
         String query = QueryUtil.getQuery("getCategoryByTitle");
         Category category = null;
@@ -56,7 +61,9 @@ public class CategoryDao {
         return category;
     }
 
-    // ✅ 카테고리 등록 (CREATE)
+    /**
+     * 📌 카테고리 등록 (CREATE)
+     */
     public boolean addCategory(Category category) {
         String query = QueryUtil.getQuery("addCategory");
 

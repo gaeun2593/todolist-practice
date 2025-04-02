@@ -14,28 +14,21 @@ public class Category {
         this.createdAt = createdAt;
     }
 
-    public int getCategoryId() {
-        return categoryId;
+    public Category(String title) {
+        this.title = title;
+        this.createdAt = LocalDateTime.now();
     }
 
-    public void setCategoryId(int categoryId) {
-        this.categoryId = categoryId;
+    public int getCategoryId() {
+        return categoryId;
     }
 
     public String getTitle() {
         return title;
     }
 
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
     public LocalDateTime getCreatedAt() {
         return createdAt;
-    }
-
-    public void setCreatedAt(LocalDateTime createdAt) {
-        this.createdAt = createdAt;
     }
 
     @Override

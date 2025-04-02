@@ -32,7 +32,10 @@ public class UserView {
 
             switch (choice) {
                 case 1 -> updateNickname(loggedInUser);
-                case 2 -> softDeleteUser(loggedInUser);
+                case 2 -> {
+                    softDeleteUser(loggedInUser);
+                    return;
+                }
                 case 3 -> showUserInfo(loggedInUser);
                 case 0 -> {
                     return; // 메인 화면으로 돌아가기

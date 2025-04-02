@@ -49,7 +49,8 @@ public class TaskService {
     }
 
     // To Do List 내용 등록
-    public boolean addTask(Task task) throws SQLException {
+    public boolean addTask(User loggedInUser, Task task) throws SQLException {
+        task.setUserId(loggedInUser.getUserId());
         return  taskDao.addTaskContents(task);
     }
 

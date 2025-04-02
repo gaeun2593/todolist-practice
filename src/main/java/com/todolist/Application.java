@@ -1,6 +1,5 @@
 package com.todolist;
 
-import com.todolist.domain.task.view.TaskView;
 import com.todolist.domain.user.model.User;
 import com.todolist.domain.user.view.UserView;
 import com.todolist.jdbc.config.JDBCConnection;
@@ -44,7 +43,7 @@ public class Application {
     }
 
     // 2️⃣ 로그인
-    private static void startLogIn(Connection connection, Scanner scanner) {
+    private static void startLogIn(Connection connection, Scanner scanner) throws SQLException {
         UserView userView = new UserView(connection);
         User loggedInUser = userView.logInUser();
 

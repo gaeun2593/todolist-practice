@@ -29,6 +29,7 @@ public class Task {
     }
 
     public Task() {}
+
     public int getTaskId() {
         return taskId;
     }

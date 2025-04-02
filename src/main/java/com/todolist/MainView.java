@@ -17,10 +17,10 @@ public class MainView {
         this.connection = connection;
     }
 
-    public void showMainMenu(User loggedInUser) {
+    public void showMainMenu(User loggedInUser) throws SQLException {
         while (true) {
             System.out.println("\n❣️ 메인 화면 ❣️");
-            System.out.println("1. 투두리스트 관리 - 조회, 검색, 등록, 랭킹");
+            System.out.println("1. 투두리스트 관리 - 조회, 검색, 등록");
             System.out.println("2. 회원 관리 - 닉네임 변경, 회원 탈퇴");
             System.out.println("0. 로그아웃");
             System.out.print("\n선택: ");

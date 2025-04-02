@@ -2,6 +2,8 @@ package com.todolist.domain.task.view;
 
 import com.todolist.domain.category.model.Category;
 import com.todolist.domain.category.service.CategoryService;
+import com.todolist.domain.category.view.CategoryView;
+import com.todolist.domain.task.model.Task;
 import com.todolist.domain.task.model.dto.TaskWithDetailsDto;
 import com.todolist.domain.task.model.dto.TodoAndCategoryDto;
 import com.todolist.domain.task.service.TaskService;
@@ -12,19 +14,23 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
+import static java.time.LocalTime.now;
+
 public class TaskView {
 
     private TaskService taskService;
     private CategoryService categoryService;
+    private CategoryView categoryView;
     private static Scanner scanner;
 
     public TaskView(Connection connection) {
         this.taskService = new TaskService(connection);
         this.categoryService = new CategoryService(connection);
+        this.categoryView = new CategoryView(connection);
         this.scanner = new Scanner(System.in);
     }
 
-    public void mainTask(Connection connection, User loggedInUser) {
+    public void mainTask(Connection connection, User loggedInUser) throws SQLException {
         TaskView taskView = new TaskView(connection);
         while (true) {
             System.out.println("\n📝 투두리스트 관리 📝");
@@ -42,7 +48,7 @@ public class TaskView {
             switch (choice) {
                 case 1 -> taskView.getAllTasks(loggedInUser);
                 case 2 -> getTasksByCategory();
-//                case 3 -> getUserById();
+                case 3 -> addTask(loggedInUser);
                 case 4 -> updateTaskStatus(loggedInUser);
                 case 5 -> softDeleteTask(loggedInUser);
                 case 0 -> {
@@ -150,8 +156,8 @@ public class TaskView {
 
                 if (choice > 0 && choice <= categories.size()) {
                     Category selectedCategory = categories.get(choice - 1);
-
                     List<TodoAndCategoryDto> tasks = taskService.getTasksByCategory(selectedCategory.getCategoryId());
+
                     System.out.println("\n[" + selectedCategory.getTitle() + "] 할 일 목록:");
                     if (tasks.isEmpty()) {
                         System.out.println("❌ 작성된 투두리스트가 없습니다.");
@@ -172,15 +178,78 @@ public class TaskView {
                 } else {
                     System.out.println("❌ 잘못된 입력입니다. 다시 선택하세요.");
                 }
-
             }
         } catch (SQLException ex) {
             throw new RuntimeException(ex);
         }
     }
 
-    // 5️⃣ 완료 표시하기 (UPDATE)
-    public void updateTaskStatus(User loggedInUser) {
+    // 3️⃣ 투두리스트 등록 (CREATE)
+    private void addTask(User loggedInUser) throws SQLException {
+        List<Category> categories = categoryService.getAllCategories();
+
+        if (categories.isEmpty()) {
+            System.out.println("❌ 현재 추가된 카테고리가 없습니다.");
+        }
+
+        while (true) {
+            System.out.println("\n📚 카테고리 목록 📚");
+            for (int i = 0; i < categories.size(); i++) {
+                System.out.println((i + 1) + ". " + categories.get(i).getTitle());
+            }
+            System.out.println((categories.size() + 1) + ". 🆕 카테고리 추가하기");
+            System.out.println("0. 뒤로가기");
+
+            System.out.print("\n카테고리 선택: ");
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 개행 문자 처리
+
+            if (choice == 0) {
+                return;  // 뒤로가기
+            }
+
+            Category selectedCategory;
+
+            // 새로운 카테고리 추가
+            if (choice == categories.size() + 1) {
+                Category newCategory = categoryView.addCategory();
+                if (newCategory == null) {
+                    continue; // 추가 실패 시 다시 선택 화면으로 돌아감
+                }
+
+                categories = categoryService.getAllCategories(); // 최신화
+                selectedCategory = newCategory; // 새로 추가한 카테고리 사용
+            }
+            // 기존 카테고리 선택
+            else if (choice > 0 && choice <= categories.size()) {
+                selectedCategory = categories.get(choice - 1);
+            } else {
+                System.out.println("❌ 잘못된 입력입니다. 다시 선택하세요.");
+                continue;
+            }
+
+            // 투두리스트 내용 입력 받기
+            System.out.print("\n📌 추가할 투두리스트 내용을 입력해주세요: ");
+            String taskContents = scanner.nextLine();
+
+            Task task = new Task();
+            task.setContents(taskContents);
+            task.setCategoryId(selectedCategory.getCategoryId());
+            task.setUserId(loggedInUser.getUserId());
+
+            boolean result = taskService.addTask(loggedInUser, task);
+
+            if (result) {
+                System.out.println("✅ 투두리스트가 등록되었습니다.");
+            } else {
+                System.out.println("❌ 투두리스트 등록에 실패했습니다.");
+            }
+            return;
+        }
+    }
+
+    // 4️⃣ 완료 표시하기 (UPDATE)
+    private void updateTaskStatus(User loggedInUser) {
         Scanner scanner = new Scanner(System.in);
 
         try {
@@ -225,12 +294,12 @@ public class TaskView {
                 System.out.println("❌ 변경이 실패되었습니다.");
             }
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            System.out.println("❌ To Do List 완료 상태를 변경하는 중 오류가 발생했습니다.");
         }
     }
 
-    // 6️⃣ 투두리스트 삭제 (soft delete - UPDATE)
-    public void softDeleteTask(User loggedInUser) {
+    // 5️⃣ 투두리스트 삭제 (soft delete - UPDATE)
+    private void softDeleteTask(User loggedInUser) {
         try {
             List<TaskWithDetailsDto> tasks = taskService.getTasksByUser(loggedInUser);
 
@@ -300,7 +369,7 @@ public class TaskView {
             }
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("❌ To Do List를 삭제하는 중 오류가 발생했습니다.");
         }
     }
 }

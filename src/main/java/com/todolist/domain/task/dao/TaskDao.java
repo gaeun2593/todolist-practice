@@ -18,10 +18,12 @@ public class TaskDao {
         this.connection = connection;
     }
 
-    // ✅ To Do List 전체 조회 (READ)
+    /**
+     * 📌 To Do List 전체 조회 (READ)
+     */
     public List<TaskWithDetailsDto> getAllTasks() {
         List<TaskWithDetailsDto> tasks = new ArrayList<>();
-        String query = QueryUtil.getQuery("getAllTasks"); // XML에서 쿼리 로드
+        String query = QueryUtil.getQuery("getAllTasks");
 
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -43,7 +45,9 @@ public class TaskDao {
         return tasks;
     }
 
-    // To Do List 유저 별 조회 (READ)
+    /**
+     * 📌 To Do List 유저 별 조회 (READ)
+     */
     public List<TaskWithDetailsDto> getTasksByUser(int userId) throws SQLException {
         List<TaskWithDetailsDto> tasks = new ArrayList<>();
         String query = QueryUtil.getQuery("getTasksByUser");
@@ -69,7 +73,9 @@ public class TaskDao {
         return tasks;
     }
 
-    // ✅ To Do List 카테고리 별 조회 (READ)
+    /**
+     * 📌 To Do List 카테고리 별 조회 (READ)
+     */
     public List<TodoAndCategoryDto> getTasksByCategory(int categoryId) {
         List<TodoAndCategoryDto> tasks = new ArrayList<>();
         String query = QueryUtil.getQuery("getTaskByCategory");
@@ -96,8 +102,9 @@ public class TaskDao {
         return tasks;
     }
 
-
-    // ✅ To Do List 내용 등록 (CREATE)
+    /**
+     * 📌 To Do List 내용 등록 (CREATE)
+     */
     public boolean addTaskContents(Task task) {
         String query = QueryUtil.getQuery("addTask");
 
@@ -115,7 +122,9 @@ public class TaskDao {
         return false;
     }
 
-    // ✅ To Do List 상태 변경 -> COMPLETED (UPDATE)
+    /**
+     * 📌 To Do List 상태 변경 -> COMPLETED (UPDATE)
+     */
     public boolean updateTaskStatus(Task task) {
         String query = QueryUtil.getQuery("updateTaskStatus");
 
@@ -132,7 +141,9 @@ public class TaskDao {
         return false;
     }
 
-    // ✅ status가 IN_PROGRESS인 To Do List만 조회 (READ)
+    /**
+     * 📌 status가 IN_PROGRESS인 To Do List만 조회 (READ)
+     */
     public List<TaskWithDetailsDto> getTasksByUserInProgress(int userId) throws SQLException {
         List<TaskWithDetailsDto> tasks = new ArrayList<>();
         String query = QueryUtil.getQuery("getTasksByUserInProgress");
@@ -156,7 +167,9 @@ public class TaskDao {
         }
     }
 
-    // ✅ To Do List 삭제 (DELETE - Soft Delete)
+    /**
+     * 📌 To Do List 삭제 (DELETE - Soft Delete)
+     */
     public boolean softDeleteTask (int userId, int taskId) throws SQLException {
         String deleteQuery = QueryUtil.getQuery("softDeleteTask");
 

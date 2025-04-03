@@ -14,8 +14,6 @@ import java.sql.SQLException;
 import java.util.List;
 import java.util.Scanner;
 
-import static java.time.LocalTime.now;
-
 public class TaskView {
 
     private TaskService taskService;
@@ -60,7 +58,9 @@ public class TaskView {
         }
     }
 
-    // 1️⃣ 투두리스트 조회 (READ)
+    /**
+     * 1️⃣ 전체 투두리스트 조회 (READ)
+     */
     private void getAllTasks(User loggedInUser) {
         try {
             List<TaskWithDetailsDto> tasks = taskService.getAllTasks();
@@ -95,7 +95,9 @@ public class TaskView {
         }
     }
 
-    // 1️⃣ - 1. 유저 별 ToDoList 조회 (READ)
+    /**
+     * 1️⃣ - 1. 유저 별 ToDoList 조회 (READ)
+     */
     private void getTasksByUser(User loggedInUser) {
         try {
             List<TaskWithDetailsDto> tasks = taskService.getTasksByUser(loggedInUser);
@@ -128,15 +130,12 @@ public class TaskView {
         }
     }
 
-    // 2️⃣ 카테고리별 조회 (READ)
+    /**
+     * 2️⃣ 카테고리별 조회 (READ)
+     */
     private void getTasksByCategory() {
         try {
             List<Category> categories = categoryService.getAllCategories();
-
-            if (categories.isEmpty()) {
-                System.out.println("❌ 현재 추가된 카테고리가 없습니다.");
-                return;
-            }
 
             System.out.println("\n📚 카테고리 목록 📚");
             while (true) {
@@ -184,7 +183,9 @@ public class TaskView {
         }
     }
 
-    // 3️⃣ 투두리스트 등록 (CREATE)
+    /**
+     * 3️⃣ 투두리스트 등록 (CREATE)
+     */
     private void addTask(User loggedInUser) throws SQLException {
         List<Category> categories = categoryService.getAllCategories();
 
@@ -205,20 +206,21 @@ public class TaskView {
             scanner.nextLine(); // 개행 문자 처리
 
             if (choice == 0) {
-                return;  // 뒤로가기
+                return;
             }
 
-            Category selectedCategory;
 
             // 새로운 카테고리 추가
+            Category selectedCategory;
+
             if (choice == categories.size() + 1) {
                 Category newCategory = categoryView.addCategory();
                 if (newCategory == null) {
-                    continue; // 추가 실패 시 다시 선택 화면으로 돌아감
+                    continue;
                 }
 
-                categories = categoryService.getAllCategories(); // 최신화
-                selectedCategory = newCategory; // 새로 추가한 카테고리 사용
+                categories = categoryService.getAllCategories();
+                selectedCategory = newCategory;
             }
             // 기존 카테고리 선택
             else if (choice > 0 && choice <= categories.size()) {
@@ -248,7 +250,9 @@ public class TaskView {
         }
     }
 
-    // 4️⃣ 완료 표시하기 (UPDATE)
+    /**
+     * 4️⃣ 완료 표시하기 (UPDATE)
+     */
     private void updateTaskStatus(User loggedInUser) {
         Scanner scanner = new Scanner(System.in);
 
@@ -277,7 +281,7 @@ public class TaskView {
                         break;
                     }
                 } else {
-                    scanner.next(); // 잘못된 입력 제거
+                    scanner.next();
                 }
                 System.out.println("❌ 올바른 숫자를 입력하세요.");
             }
@@ -298,7 +302,9 @@ public class TaskView {
         }
     }
 
-    // 5️⃣ 투두리스트 삭제 (soft delete - UPDATE)
+    /**
+     * 4️⃣ 투두리스트 삭제 (soft delete - UPDATE)
+     */
     private void softDeleteTask(User loggedInUser) {
         try {
             List<TaskWithDetailsDto> tasks = taskService.getTasksByUser(loggedInUser);

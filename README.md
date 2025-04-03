@@ -1,4 +1,4 @@
-## JAVA : ToDoList-Practice
+# JAVA : ToDoList-Practice
 자바 콘솔창을 이용해 간단한 투두리스트 구현한 개인 프로젝트
 
 ## 📍주요 기능

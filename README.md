@@ -31,4 +31,4 @@
 ![task-delete](https://github.com/user-attachments/assets/aa9c55de-5502-4ac2-ac80-a75cd9769708)
 
 ## 📍테스트코드 (JACOCO)
-<img width="612" alt="Image" src="https://github.com/user-attachments/assets/e425ff6c-6893-448f-a2dd-33df46d8d28f" />
+<img width="612" alt="그림1" src="https://github.com/user-attachments/assets/5834ffce-e38f-4af7-8bd2-ea914f5a436f" />

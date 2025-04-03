@@ -22,7 +22,7 @@ public class UserView {
      */
     public void userMenu(User loggedInUser) {
         while (true) {
-            System.out.println("\n👥 사용자 관리 👥");
+            System.out.println("\n👥 회원 관리 👥");
             System.out.println("1. 닉네임 변경");
             System.out.println("2. 회원 탈퇴");
             System.out.println("3. 내 정보");
@@ -111,6 +111,11 @@ public class UserView {
 
                 User existingUser = userService.getUserByEmail(email);
 
+                if (existingUser.getIsDeleted() == 1) {
+                    System.out.println("❌ 이미 탈퇴된 회원입니다.");
+                    continue;
+                }
+
                 System.out.print("✏️ 비밀번호를 입력하세요: ");
                 password = scanner.nextLine();
 
@@ -136,12 +141,12 @@ public class UserView {
      * - 중복되지 않는 닉네임을 입력 받아 변경
      */
     public void updateNickname(User loggedInUser) {
-        System.out.print("✏️ 새로운 사용자 닉네임을 입력하세요: ");
+        System.out.println("✏️ 새로운 사용자 닉네임을 입력하세요: ");
         System.out.println("0. 뒤로가기");
         System.out.print("\n입력: ");
         String newNickname = scanner.nextLine();
 
-        if (Integer.parseInt(newNickname) == 0) {
+        if (newNickname.equals("0")) {
             return;
         }
 

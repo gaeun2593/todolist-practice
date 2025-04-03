@@ -19,7 +19,10 @@ public class UserService {
         this.userDao = new UserDao(connection);
     }
 
-    // 전체 유저 조회
+    /**
+     * 📌 모든 유저 조회 (READ)
+     * - 데이터 검증 후 반환
+     */
     public List<User> getAllUsers() throws SQLException {
         List<User> users = userDao.getAllUsers();
 
@@ -31,22 +34,38 @@ public class UserService {
         return userDao.getAllUsers();
     }
 
-    // 이메일 조회
+    /**
+     * 📌 단일 유저 조회 (READ)
+     * - 주어진 유저의 email 을 기반으로 데이터베이스에서 사용자를 조회
+     * @param email 조회할 유저의 이메일
+     * @return 조회된 'User' 객체를 반환. 유저가 존재하지 않을 경우, 예외 발생
+     * @throws IllegalArgumentException 해당 email 의 유저가 존재하지 않는 경우 발생
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     */
     public User getUserByEmail(String email) throws SQLException {
         User user = userDao.getUserByEmail(email);
 
         if (user == null) {
             throw new IllegalArgumentException("❌ 해당 이메일의 사용자를 찾을 수 없습니다.");
         }
+
         if (user.getIsDeleted() == 1) {
             // 탈퇴된 회원인 경우
-            throw new IllegalArgumentException("❌ 이미 탈퇴된 회원입니다.");
+            System.out.println("❌ 이미 탈퇴된 회원입니다.");
         }
+
         return user;
     }
 
 
-    // 회원가입 : 닉네임, 이메일 중복 체크 후 추가
+    /**
+     * 📌 유저 등록 (CREATE)
+     * - 닉네임, 이메일 중복 체크 후 추가 (회원 가입)
+     * @param user 사용자 객체를 전달받음
+     * @return boolean 성공 여부를 boolean 타입으로 반환
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     * @throws IllegalArgumentException 중복되는 닉네임, 이메일이 존재하는 경우 발생
+     */
     public boolean registerUser(User user) throws SQLException {
         List<User> existingUsers = getAllUsers();
 
@@ -63,30 +82,28 @@ public class UserService {
                 throw new IllegalArgumentException("❌ 이미 존재하는 이메일입니다.");
             }
         }
-        return userDao.addUser(user);
+
+        return userDao.registerUser(user);
     }
 
-    // 이메일 정규식 검사
+    /**
+     * 📌 이메일 정규식 검사
+     * - 로그인 시 이메일 정규식을 검사하기 위해 사용
+     */
     public boolean isValidEmail(String email) {
         String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
         return email.matches(emailRegex);
     }
 
-    // 로그인 : 이메일, 비밀번호 조회 후 테이블에 값이 있으면 성공
-    public User loginUser(String email, String password) throws SQLException {
-        User user = userDao.getUserByEmail(email);
-
-        if (user == null) {
-            throw new IllegalArgumentException("❌ 해당 이메일의 사용자를 찾을 수 없습니다.");
-        }
-
-        if (!user.getPassword().equals(password)) {
-            throw new IllegalArgumentException("❌ 비밀번호가 일치하지 않습니다.");
-        }
-        return user;
-    }
-
-    // 닉네임 변경 : 이메일로 사용자 조회 후 닉네임 변경
+    /**
+     * 📌 사용자 닉네임 변경 (UPDATE)
+     * - 기존 사용자 존재 여부 확인 후 업데이트
+     * - 닉네임 중복 여부 검증 추가
+     * @param user 수정할 사용자 정보를 포함하는 User 객체
+     * @return boolean 사용자 정보 수정 성공 여부를 반환합니다.
+     * @throws IllegalArgumentException 수정할 사용자가 존재하지 않거나, 닉네임이 이미 존재하는 경우 발생합니다.
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생합니다.
+     */
     public boolean updateNickname(User user) throws SQLException {
         // 기존 사용자 이메일 존재 여부 확인
         User existingUser = getUserByEmail(user.getEmail());
@@ -111,7 +128,14 @@ public class UserService {
         return result;
     }
 
-    // 회원 탈퇴 : 이메일과 비밀번호 조회 후 탈퇴 정보(is_delete = 1) 업데이트
+    /**
+     * 📌 회원 탈퇴 (soft delete - UPDATE)
+     * - 이메일과 비밀번호 조회 후 탈퇴 정보(is_delete = 1) 업데이트
+     * @param user 탈퇴할 사용자 정보를 포함하는 User 객체
+     * @return boolean 사용자 정보 탈퇴 성공 여부를 반환
+     * @throws IllegalArgumentException 탈퇴할 사용자가 존재하지 않거나, 비밀번호가 일치하지 않는 경우 발생
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     */
     public boolean softDeleteUser(User user) throws SQLException {
         // 기존 사용자 이메일 존재 여부 확인
         User existingUser = getUserByEmail(user.getEmail());
@@ -126,6 +150,7 @@ public class UserService {
         }
 
         boolean result = userDao.softDeleteUser(user);
+
         if (!result) {
             throw new SQLException("탈퇴하는 과정에서 오류가 발생되었습니다.");
         }

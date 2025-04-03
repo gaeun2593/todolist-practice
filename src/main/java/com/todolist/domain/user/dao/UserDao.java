@@ -15,9 +15,11 @@ public class UserDao {
         this.connection = connection;
     }
 
-    // ✅ 회원가입 (CREATE)
-    public boolean addUser(User user) {
-        String query = QueryUtil.getQuery("addUser");
+    /**
+     * 📌 회원가입 (CREATE)
+     */
+    public boolean registerUser(User user) {
+        String query = QueryUtil.getQuery("registerUser");
 
         try (PreparedStatement ps = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, user.getNickname());
@@ -33,7 +35,9 @@ public class UserDao {
         return false;
     }
 
-    // ✅ 이메일 조회 (READ) - 로그인, 닉네임 변경, 회원 탈퇴 시 필요
+    /**
+     * 📌 이메일 조회 (READ) - 로그인, 내 정보 확인 시 필요
+     */
     public User getUserByEmail(String email) {
         String query = QueryUtil.getQuery("getUserByEmail");
         User user = null;
@@ -62,10 +66,12 @@ public class UserDao {
         return user;
     }
 
-    // ✅ 전체 유저 조회 (READ)
+    /**
+     * 📌 전체 유저 조회 (READ)
+     */
     public List<User> getAllUsers() {
         List<User> users = new ArrayList<>();
-        String query = QueryUtil.getQuery("getAllUsers"); // XML에서 쿼리 로드
+        String query = QueryUtil.getQuery("getAllUsers");
 
         try (Statement stmt = connection.createStatement();
              ResultSet rs = stmt.executeQuery(query)) {
@@ -90,7 +96,9 @@ public class UserDao {
         return users;
     }
 
-    // ✅ 닉네임 변경 (UPDATE)
+    /**
+     * 📌 닉네임 변경 (UPDATE)
+     */
     public boolean updateNickname(User user) {
         String query = QueryUtil.getQuery("updateNickname");
 
@@ -107,7 +115,9 @@ public class UserDao {
         return false;
     }
 
-    // ✅ 회원 탈퇴 (UPDATE - soft delete 사용)
+    /**
+     * 📌 회원 탈퇴 (UPDATE - soft delete 사용)
+     */
     public boolean softDeleteUser(User user) {
         String query = QueryUtil.getQuery("softDeleteUser");
 

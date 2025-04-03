@@ -17,7 +17,9 @@ public class UserView {
         this.scanner = new Scanner(System.in);
     }
 
-    // 사용자 관리 화면
+    /**
+     * 📌 사용자 관리 화면
+     */
     public void userMenu(User loggedInUser) {
         while (true) {
             System.out.println("\n👥 사용자 관리 👥");
@@ -45,7 +47,10 @@ public class UserView {
         }
     }
 
-    // 1️⃣ 회원 등록 (CREATE)
+    /**
+     * 유저 등록
+     * - 닉네임, 이메일, 비밀번호를 입력 받아 회원 가입 진행
+     */
     public void registerUser() {
         String nickname;
 
@@ -91,7 +96,10 @@ public class UserView {
         }
     }
 
-    // 2️⃣ 로그인 (READ)
+    /**
+     * 로그인
+     * - 이메일을 입력 받고 데이터베이스에서 조회 후 비밀번호와 일치하면 로그인 수행
+     */
     public User logInUser() {
         String email;
         String password;
@@ -102,11 +110,6 @@ public class UserView {
                 email = scanner.nextLine();
 
                 User existingUser = userService.getUserByEmail(email);
-
-                if (existingUser == null) {
-                    System.out.println("❌ 해당 이메일의 사용자를 찾을 수 없습니다.");
-                    continue;
-                }
 
                 System.out.print("✏️ 비밀번호를 입력하세요: ");
                 password = scanner.nextLine();
@@ -128,7 +131,10 @@ public class UserView {
         return null;
     }
 
-    // 3️⃣ 닉네임 변경 (UPDATE)
+    /**
+     * 1️⃣ 닉네임 변경
+     * - 중복되지 않는 닉네임을 입력 받아 변경
+     */
     public void updateNickname(User loggedInUser) {
         System.out.print("✏️ 새로운 사용자 닉네임을 입력하세요: ");
         System.out.println("0. 뒤로가기");
@@ -155,7 +161,10 @@ public class UserView {
         }
     }
 
-    // 4️⃣ 회원 탈퇴 (soft delete)
+    /**
+     * 2️⃣ 회원 탈퇴
+     * - 비밀번호로 본인 확인 후 회원 탈퇴 진행
+     */
     public void softDeleteUser(User loggedInUser) {
         System.out.println("✏️ 탈퇴할 사용자의 비밀번호를 입력하세요");
         System.out.println("0. 뒤로가기");
@@ -186,7 +195,10 @@ public class UserView {
         }
     }
 
-    // 회원 정보
+    /**
+     * 3️⃣ 회원 정보
+     * - 로그인한 유저의 이메일, 닉네임, 가입일 정보 출력
+     */
     public void showUserInfo(User loggedInUser) {
         while(true) {
             System.out.println("📍 내 정보 📍");

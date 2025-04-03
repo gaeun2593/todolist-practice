@@ -21,3 +21,4 @@
 6. 투두리스트 삭제
 
 ## 📍테스트코드 (JACOCO)
+<img width="612" alt="Image" src="https://github.com/user-attachments/assets/e425ff6c-6893-448f-a2dd-33df46d8d28f" />

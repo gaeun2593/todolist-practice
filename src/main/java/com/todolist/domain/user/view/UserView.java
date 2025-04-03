@@ -187,6 +187,7 @@ public class UserView {
 
             if (success) {
                 System.out.println("✅ 회원 탈퇴가 완료되었습니다.");
+                System.exit(0);
             } else {
                 System.out.println("❌ 회원 탈퇴에 실패하였습니다.");
             }

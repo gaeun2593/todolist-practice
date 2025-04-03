@@ -37,7 +37,7 @@ class UserDaoTest {
 
             // Arrange: 테스트 데이터 삽입
             User testUser = new User(0, TEST_NICKNAME, TEST_EMAIL, TEST_PASSWORD, null, null, null,0);
-            userDao.addUser(testUser);
+            userDao.registerUser(testUser);
 
             // 삽입된 데이터 확인 (테스트용 ID 저장)
             List<User> users = userDao.getAllUsers();
@@ -59,7 +59,7 @@ class UserDaoTest {
         User newUser = new User(0, "new_user", "newuser@example.com", "newpassword", null, null, null,0);
 
         // Act: 사용자 추가
-        boolean isAdded = userDao.addUser(newUser);
+        boolean isAdded = userDao.registerUser(newUser);
 
         // Assert: 추가 확인
         Assertions.assertTrue(isAdded, "사용자가 성공적으로 추가되어야 합니다.");

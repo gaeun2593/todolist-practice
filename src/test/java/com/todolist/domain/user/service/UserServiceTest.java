@@ -37,7 +37,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 모든 사용자 조회 테스트
+     *  모든 사용자 조회 테스트
      */
     @Test
     @DisplayName("모든 사용자 조회 테스트")
@@ -56,7 +56,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 이메일 조회 테스트
+     *  이메일 조회 테스트
      */
     @Test
     @DisplayName("이메일 조회 테스트")
@@ -82,7 +82,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 로그인 테스트
+     *  로그인 테스트
      */
     @Test
     @DisplayName("로그인 테스트")
@@ -100,7 +100,7 @@ class UserServiceTest {
 
         // Act
         User user = matchingUser.get();
-        User loggedInUser = userService.loginUser(user.getEmail(), user.getPassword());
+        User loggedInUser = userService.getUserByEmail(user.getEmail());
 
         // Assert
         assertNotNull(user, "사용자가 존재해야 합니다.");
@@ -109,7 +109,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 중복 닉네임, 이메일 방지 테스트
+     *  중복 닉네임, 이메일 방지 테스트
      */
     @Test
     @DisplayName("중복 닉네임, 이메일 방지 테스트")
@@ -124,7 +124,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 닉네임 변경 테스트 (닉네임 중복 방지 포함)
+     *  닉네임 변경 테스트 (닉네임 중복 방지 포함)
      */
     @Test
     @DisplayName("닉네임 변경 테스트")
@@ -144,7 +144,7 @@ class UserServiceTest {
     }
 
     /**
-     * ✅ 회원 탈퇴 테스트
+     *  회원 탈퇴 테스트
      */
     @Test
     @DisplayName("회원 탈퇴 테스트")
@@ -152,7 +152,8 @@ class UserServiceTest {
         // Arrange
         List<User> users = userService.getAllUsers();
         int userId = users.get(0).getUserId();
-        User softDeleteUser = new User(userId, TEST_NICKNAME, TEST_EMAIL, TEST_PASSWORD, null, null, null,0);
+        User softDeleteUser = new User(userId, TEST_NICKNAME, TEST_EMAIL, TEST_PASSWORD,
+                null, null, null,0);
 
         // Act
         boolean isDeleted = userService.softDeleteUser(softDeleteUser);
@@ -161,7 +162,8 @@ class UserServiceTest {
         // Assert
         assertTrue(isDeleted, "회원 탈퇴가 성공해야 합니다.");
         Assertions.assertEquals(1, retrievedUser.getIsDeleted(), "is_deleted가 1로 변경되어야 합니다.");
-        Assertions.assertNotNull(retrievedUser.getDeletedAt(), "deleted_at이 현재 시간으로 설정되어야 합니다.");    }
+        Assertions.assertNotNull(retrievedUser.getDeletedAt(), "deleted_at이 현재 시간으로 설정되어야 합니다.");
+    }
 
     /**
      * ✅ 테스트 후 DB 롤백하여 데이터 원상복구

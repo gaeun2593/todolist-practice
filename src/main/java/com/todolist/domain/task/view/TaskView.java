@@ -38,7 +38,7 @@ public class TaskView {
             System.out.println("4. 완료 표시하기");
             System.out.println("5. 투두리스트 삭제");
             System.out.println("0. 메인 화면으로");
-            System.out.print("선택하세요: ");
+            System.out.print("선택: ");
 
             int choice = scanner.nextInt();
             scanner.nextLine(); // 개행 문자 처리

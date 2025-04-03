@@ -27,10 +27,6 @@ public class Category {
         return title;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
     @Override
     public String toString() {
         return "Category{" +

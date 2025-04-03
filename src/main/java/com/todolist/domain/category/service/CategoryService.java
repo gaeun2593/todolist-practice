@@ -20,7 +20,7 @@ public class CategoryService {
     }
 
     /**
-     * 📌 모든 카테고리 조회
+     * 📌 모든 카테고리 조회 (READ)
      * - 데이터 검증 후 반환
      */
     public List<Category> getAllCategories() throws SQLException {
@@ -35,9 +35,8 @@ public class CategoryService {
     }
 
     /**
-     * 📌 단일 카테고리 조회
-     * - 이 메서드는 주어진 카테고리 title 을 기반으로 데이터베이스에서 사용자를 조회합니다.
-     *
+     * 📌 단일 카테고리 조회 (READ)
+     * - 이 메서드는 주어진 카테고리 title 을 기반으로 데이터베이스에서 카테고리를 조회합니다.
      * @param title 조회할 카테고리의 제목
      * @return 조회된 'Category' 객체를 반환. 카테고리가 존재하지 않을 경우, 예외 발생
      * @throws IllegalArgumentException 해당 title 의 카테고리가 존재하지 않을 경우 발생
@@ -53,15 +52,20 @@ public class CategoryService {
     }
 
     /**
-     * 📌 카테고리 추가
-     * - 이 메서드는 주어진 카테고리 title 을 기반으로 데이터베이스에서 사용자를 조회합니다.
-     *
-     * @param category 추가할 카테고리의 객체
-     * @return 조회된 'Category' 객체를 반환. 카테고리가 존재하지 않을 경우, 예외 발생
-     * @throws IllegalArgumentException 해당 title 의 카테고리가 존재하지 않을 경우 발생
-     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생
+     * 📌 카테고리 추가 (CREATE)
+     * - 이 메서드는 카테고리 제목 중복 체크 후 카테고리를 추가합니다.
+     * @param category 카테고리 객체를 전달받음
+     * @return categoryDao 의 addCategory() 반환
+     * @throws SQLException 데이터베이스 접근 중 오류가 발생할 경우 발생합니다.
+     * @throws IllegalArgumentException 중복하는 카테고리가 존재하는 경우 발생
      */
     public boolean addCategory(Category category) throws SQLException {
+        List<Category> categories = categoryDao.getAllCategories();
+        for (Category c : categories) {
+            if (c.getTitle().equals(category.getTitle())) {
+                throw new IllegalArgumentException("이미 존재하는 카테고리입니다.");
+            }
+        }
         return  categoryDao.addCategory(category);
     }
 }

@@ -20,8 +20,8 @@ public class MainView {
     public void showMainMenu(User loggedInUser) throws SQLException {
         while (true) {
             System.out.println("\n❣️ 메인 화면 ❣️");
-            System.out.println("1. 투두리스트 관리 - 조회, 검색, 등록");
-            System.out.println("2. 회원 관리 - 닉네임 변경, 회원 탈퇴");
+            System.out.println("1. 투두리스트 관리 - 조회, 등록, 완료, 삭제");
+            System.out.println("2. 회원 관리 - 닉네임 변경, 회원 탈퇴, 내 정보");
             System.out.println("0. 로그아웃");
             System.out.print("\n선택: ");
 

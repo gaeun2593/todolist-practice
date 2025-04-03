@@ -33,7 +33,6 @@ test {
     useJUnitPlatform()
 }
 
-
 jacocoTestReport {
     dependsOn test
     reports {

@@ -14,7 +14,7 @@
         WHERE email = ?
     </query>
 
-    <query id="addUser">
+    <query id="registerUser">
         INSERT INTO user (nickname, email, password)
         VALUES (?, ?, ?)
     </query>

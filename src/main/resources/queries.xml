@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<queries>
+    <!-- 유저 쿼리 -->
+    <query id="getAllUsers">
+        SELECT
+        *
+        FROM user
+    </query>
+
+    <query id="getUserByEmail">
+        SELECT
+        *
+        FROM user
+        WHERE email = ?
+    </query>
+
+    <query id="registerUser">
+        INSERT INTO user (nickname, email, password)
+        VALUES (?, ?, ?)
+    </query>
+
+    <query id="updateNickname">
+        UPDATE user SET nickname = ?, updated_at = COALESCE(updated_at, NOW()) WHERE email = ?
+    </query>
+
+    <query id="softDeleteUser">
+        UPDATE user SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE email = ? AND password = ?
+    </query>
+
+    <!-- 카테고리 쿼리 -->
+    <query id="getAllCategories">
+        SELECT
+        *
+        FROM category
+    </query>
+
+    <query id="getCategoryByTitle">
+        SELECT
+        *
+        FROM category
+        WHERE title = ?
+    </query>
+
+    <query id="addCategory">
+        INSERT INTO category (title)
+        VALUES (?)
+    </query>
+
+    <!-- 태스크 쿼리 -->
+    <query id="getAllTasks">
+        SELECT t.task_id, c.title AS category_title, u.nickname, t.contents, t.created_at, t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.is_deleted = 0
+    </query>
+
+    <query id="getTasksByUser">
+        SELECT t.task_id, t.category_id, t.contents, t.created_at, t.status,
+        c.title AS category_title, u.nickname AS nickname
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.user_id = ? AND t.is_deleted = 0
+        ORDER BY t.created_at DESC;
+    </query>
+
+    <query id="getTaskByCategory">
+        SELECT t.task_id, t.category_id, u.nickname AS nickname,
+        c.title AS category_title, t.contents, t.created_at, t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.category_id = ? AND t.is_deleted = 0
+        ORDER BY t.created_at DESC;
+    </query>
+
+    <query id="addTask">
+        INSERT INTO task (user_id, category_id, contents)
+        VALUES (?, ?, ?)
+    </query>
+
+    <query id="updateTaskStatus">
+        UPDATE task SET status = "COMPLETED", updated_at = COALESCE(updated_at, NOW()) WHERE user_id = ? AND task_id = ?
+    </query>
+
+    <query id="getTasksByUserInProgress">
+        SELECT
+        t.task_id,
+        c.title AS category_title,
+        u.nickname,
+        t.contents,
+        t.created_at,
+        t.status
+        FROM task t
+        JOIN category c ON t.category_id = c.category_id
+        JOIN user u ON t.user_id = u.user_id
+        WHERE t.user_id = ? AND t.status = 'IN_PROGRESS' AND t.is_deleted = 0
+    </query>
+
+    <query id="softDeleteTask">
+        UPDATE task SET is_deleted = 1, deleted_at = COALESCE(deleted_at, NOW()) WHERE task_id = ? AND user_id = ?
+    </query>
+</queries>

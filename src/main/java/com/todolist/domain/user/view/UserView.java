@@ -1,0 +1,225 @@
+package com.todolist.domain.user.view;
+
+import com.todolist.domain.user.model.User;
+import com.todolist.domain.user.service.UserService;
+
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Scanner;
+
+public class UserView {
+
+    private final UserService userService;
+    private final Scanner scanner;
+
+    public UserView(Connection connection) {
+        this.userService = new UserService(connection);
+        this.scanner = new Scanner(System.in);
+    }
+
+    /**
+     * 📌 사용자 관리 화면
+     */
+    public void userMenu(User loggedInUser) {
+        while (true) {
+            System.out.println("\n👥 회원 관리 👥");
+            System.out.println("1. 닉네임 변경");
+            System.out.println("2. 회원 탈퇴");
+            System.out.println("3. 내 정보");
+            System.out.println("0. 메인 화면으로");
+            System.out.print("\n선택: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 개행 문자 처리
+
+            switch (choice) {
+                case 1 -> updateNickname(loggedInUser);
+                case 2 -> {
+                    softDeleteUser(loggedInUser);
+                    return;
+                }
+                case 3 -> showUserInfo(loggedInUser);
+                case 0 -> {
+                    return; // 메인 화면으로 돌아가기
+                }
+                default -> System.out.println("잘못된 입력입니다. 다시 선택하세요.");
+            }
+        }
+    }
+
+    /**
+     * 유저 등록
+     * - 닉네임, 이메일, 비밀번호를 입력 받아 회원 가입 진행
+     */
+    public void registerUser() {
+        String nickname;
+
+        // 닉네임 길이 제한 (10자 이하)
+        while (true) {
+            System.out.print("✏️ 닉네임을 입력해주세요 (최대 10자): ");
+            nickname = scanner.nextLine();
+
+            if (nickname.length() <= 10) {
+                break;
+            } else {
+                System.out.println("❌ 닉네임은 최대 10자까지 입력할 수 있습니다. 다시 입력해주세요.");
+            }
+        }
+
+        String email;
+        while (true) {
+            System.out.print("✏️ 이메일을 입력해주세요: ");
+            email = scanner.nextLine();
+
+            if (userService.isValidEmail(email)) {
+                break;
+            } else {
+                System.out.println("❌ 유효하지 않은 이메일 형식입니다. 다시 입력해주세요.");
+            }
+        }
+
+        System.out.print("✏️ 비밀번호를 입력해주세요 : ");
+        String password = scanner.nextLine();
+
+        User user = new User(0, nickname, email, password, null, null, null,0);
+        try {
+            boolean success = userService.registerUser(user);
+            if (success) {
+                System.out.println("✅ 회원 등록이 완료되었습니다.");
+            } else {
+                System.out.println("❌ 회원 등록에 실패하였습니다.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 회원 등록 중 오류가 발생했습니다.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * 로그인
+     * - 이메일을 입력 받고 데이터베이스에서 조회 후 비밀번호와 일치하면 로그인 수행
+     */
+    public User logInUser() {
+        String email;
+        String password;
+
+        try {
+            while (true) {
+                System.out.print("✏️ 이메일을 입력하세요: ");
+                email = scanner.nextLine();
+
+                User existingUser = userService.getUserByEmail(email);
+
+                if (existingUser.getIsDeleted() == 1) {
+                    System.out.println("❌ 이미 탈퇴된 회원입니다.");
+                    continue;
+                }
+
+                System.out.print("✏️ 비밀번호를 입력하세요: ");
+                password = scanner.nextLine();
+
+                if (!existingUser.getPassword().equals(password)) {
+                    System.out.println("❌ 비밀번호가 일치하지 않습니다.");
+                    continue;
+                } else {
+                    System.out.println("✅ " + existingUser.getNickname() + "님, 로그인에 성공하였습니다.");
+                    return existingUser;
+                }
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 로그인 중 오류가 발생했습니다.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return null;
+    }
+
+    /**
+     * 1️⃣ 닉네임 변경
+     * - 중복되지 않는 닉네임을 입력 받아 변경
+     */
+    public void updateNickname(User loggedInUser) {
+        System.out.println("✏️ 새로운 사용자 닉네임을 입력하세요: ");
+        System.out.println("0. 뒤로가기");
+        System.out.print("\n입력: ");
+        String newNickname = scanner.nextLine();
+
+        if (newNickname.equals("0")) {
+            return;
+        }
+
+        try {
+            loggedInUser.setNickname(newNickname);
+            boolean success = userService.updateNickname(loggedInUser);
+
+            if (success) {
+                System.out.println("✅ 사용자 닉네임이 성공적으로 수정되었습니다.");
+            } else {
+                System.out.println("❌ 사용자 닉네임 수정에 실패하였습니다.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 사용자 닉네임 수정 중 오류가 발생했습니다.");
+        } catch (IllegalArgumentException e) {
+            System.out.println(e.getMessage());
+        }
+    }
+
+    /**
+     * 2️⃣ 회원 탈퇴
+     * - 비밀번호로 본인 확인 후 회원 탈퇴 진행
+     */
+    public void softDeleteUser(User loggedInUser) {
+        System.out.println("✏️ 탈퇴할 사용자의 비밀번호를 입력하세요");
+        System.out.println("0. 뒤로가기");
+        System.out.print("\n입력: ");
+        String password = scanner.nextLine();
+
+        if (Integer.parseInt(password) == 0) {
+            return;
+        }
+
+        try {
+            // 입력한 비밀번호와 저장된 비밀번호 비교
+            if (!loggedInUser.getPassword().equals(password)) {
+                System.out.println("❌ 비밀번호가 일치하지 않습니다.");
+                return;
+            }
+
+            // 비밀번호가 일치하면 소프트 딜리트 실행
+            boolean success = userService.softDeleteUser(loggedInUser);
+
+            if (success) {
+                System.out.println("✅ 회원 탈퇴가 완료되었습니다.");
+                System.exit(0);
+            } else {
+                System.out.println("❌ 회원 탈퇴에 실패하였습니다.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ 회원 탈퇴 중 오류가 발생했습니다.");
+        }
+    }
+
+    /**
+     * 3️⃣ 회원 정보
+     * - 로그인한 유저의 이메일, 닉네임, 가입일 정보 출력
+     */
+    public void showUserInfo(User loggedInUser) {
+        while(true) {
+            System.out.println("📍 내 정보 📍");
+            System.out.println("이메일 : " + loggedInUser.getEmail());
+            System.out.println("닉네임 : " + loggedInUser.getNickname());
+            System.out.println("가입일 : " + loggedInUser.getCreatedAt().toLocalDate());
+            System.out.println("0. 뒤로가기");
+            System.out.print("\n선택: ");
+
+            int choice = scanner.nextInt();
+            scanner.nextLine(); // 개행 문자 처리
+
+            if (choice == 0) {
+                return;
+            }
+        }
+    }
+}
